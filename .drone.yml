@@ -1,5 +1,6 @@
 matrix:
   VERSION:
+    - master
     - "0.5.0"
 
 clone:
@@ -15,7 +16,7 @@ build:
     - sed -i 's/amd64/armhf/' Dockerfile
 
 publish:
-  docker:
+  docker_branch:
     image: armhfplugins/drone-docker:docker-caching
     context: docker-gen
     file: docker-gen/Dockerfile
@@ -23,7 +24,20 @@ publish:
     password: $$DOCKER_PASSWORD
     email: $$DOCKER_EMAIL
     repo: armhfbuild/docker-gen
-    tag: $$VERSION
+    tag: "$$VERSION"
+
+  docker_latest:
+    image: armhfplugins/drone-docker:docker-caching
+    context: docker-gen
+    file: docker-gen/Dockerfile
+    username: $$DOCKER_USER
+    password: $$DOCKER_PASSWORD
+    email: $$DOCKER_EMAIL
+    repo: armhfbuild/docker-gen
+    tag: latest
+    when:
+      matrix:
+        VERSION: master
 
 cache:
   mount:
