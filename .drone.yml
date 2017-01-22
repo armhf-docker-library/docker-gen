@@ -1,7 +1,7 @@
 matrix:
   VERSION:
     - master
-    - "0.5.0"
+    - "0.7.3"
 
 clone:
   path: github.com/jwilder
