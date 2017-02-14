@@ -1,25 +1,19 @@
 matrix:
   VERSION:
     - master
-    - "0.5.0"
-
-workspace:
-  base: /go
-  path: src/github.com/jwilder
+    - "0.7.3"
 
 pipeline:
   clone:
     image: armhfplugins/git
-    path: github.com/jwilder
 
   build:
     image: armhfbuild/golang:1.5
     commands:
       - git clone --single-branch --branch ${VERSION} https://github.com/jwilder/docker-gen
       - cd docker-gen
-      - make get-deps docker-gen test
-      - sed -i 's/FROM debian/FROM armhfbuild\/debian/' Dockerfile
-      - sed -i 's/amd64/armhf/' Dockerfile
+      - sed -i 's/FROM alpine/FROM armhfbuild\/alpine/' Dockerfile
+      - sed -i 's/alpine-linux-amd64/linux-armhf/' Dockerfile
 
   publish_docker_branch:
     image: armhfplugins/docker
@@ -29,7 +23,10 @@ pipeline:
     password: ${DOCKER_PASSWORD}
     email: ${DOCKER_EMAIL}
     repo: armhfbuild/docker-gen
-    tags: [ "${VERSION}" ]
+    tags: [ "0.7.3", "0.7", "latest" ]
+    when:
+      matrix:
+        VERSION: "0.7.3"
 
   publish_docker_latest:
     image: armhfplugins/docker
@@ -39,7 +36,7 @@ pipeline:
     password: ${DOCKER_PASSWORD}
     email: ${DOCKER_EMAIL}
     repo: armhfbuild/docker-gen
-    tag: latest
+    tags: [ "master" ]
     when:
       matrix:
         VERSION: master
